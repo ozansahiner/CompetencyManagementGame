@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/yukarisi.unity
+    guid: 75a1cdaf99c35f84c82924e18dc40d6e
   m_configObjects: {}
