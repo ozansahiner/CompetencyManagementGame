@@ -4,61 +4,64 @@ using UnityEngine;
 
 public class Kapi : MonoBehaviour
 {
-    public Animator animator; // Kapýyý açmak ve kapatmak için Animator bileþeni
-    private bool isOpen = false; // Kapýnýn açýk olup olmadýðýný kontrol etmek için, baþlangýçta kapalý olduðunu varsayalým
+    public Animator animator; // Kapýyý açmak ve kapatmak için Animator bileþenini kullanacaðýz
+    private bool isOpen = true; // Kapýnýn açýk olup olmadýðýný kontrol etmek için
     private Collider2D doorCollider; // Kapýnýn 2D Collider bileþeni
-    private BoxCollider2D triggerCollider; // Kapý ile etkileþimi tetiklemek için tetikleyici Collider
-    private BelirteciKontrol belirteciKontrol; // BelirteciKontrol bileþeni
+    private bool playerInRange = false; // Oyuncunun kapýnýn yakýnýnda olup olmadýðýný kontrol etmek için
 
     void Start()
     {
-        // Animator bileþenini al
+        // Animator ve Collider bileþenlerini al
         animator = GetComponent<Animator>();
         doorCollider = GetComponent<Collider2D>();
 
-        // BelirteciKontrol bileþenini al
-        belirteciKontrol = GameObject.FindObjectOfType<BelirteciKontrol>();
-
         // Kapý kapalýyken Collider'ý etkinleþtir
         doorCollider.enabled = true;
+
     }
 
-    public void OpenDoor()
+    void Update()
     {
-        if (belirteciKontrol != null && belirteciKontrol.playerInRange && !isOpen)
+        if (playerInRange && Input.GetKeyDown(KeyCode.E))
         {
-            animator.SetBool("isOpen", true); // Animator'da "isOpen" parametresini true yaparak kapýyý aç
-            doorCollider.isTrigger = false; // Kapý açýldýðýnda Collider'ý tetikleyiciye dönüþtür
-            isOpen = true; // isOpen durumunu güncelle, kapý açýk
+            if (!isOpen)
+            {
+                OpenDoor();
+            }
+            else
+            {
+                CloseDoor();
+            }
         }
     }
 
-    public void CloseDoor()
+    void OpenDoor()
     {
-        if (belirteciKontrol != null && belirteciKontrol.playerInRange && isOpen)
-        {
-            animator.SetBool("isOpen", false); // Animator'da "isOpen" parametresini false yaparak kapýyý kapat
-            doorCollider.isTrigger = true; // Kapý kapandýðýnda Collider'ý normal hale getir
-            isOpen = false; // isOpen durumunu güncelle, kapý kapalý
-        }
+        animator.SetBool("isOpen", true); // Animator'da "isOpen" parametresini true yaparak kapýyý aç
+        doorCollider.enabled = true; // Kapý açýldýðýnda Collider'ý devre dýþý býrak
+        isOpen = true;
     }
 
-    // Oyuncu tetikleyici ile etkileþime girdiðinde
-    private void OnTriggerEnter2D(Collider2D other)
+    void CloseDoor()
+    {
+        animator.SetBool("isOpen", false); // Animator'da "isOpen" parametresini false yaparak kapýyý kapat
+        doorCollider.enabled = false; // Kapý kapandýðýnda Collider'ý etkinleþtir
+        isOpen = false;
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            // E tuþuna basýlýp kapý kapalýysa
-            if (Input.GetKeyDown(KeyCode.E) && !isOpen)
-            {
-                // Kapýyý aç
-                OpenDoor();
-            }
-            else if (Input.GetKeyDown(KeyCode.E) && isOpen)
-            {
-                // Kapýyý kapat
-                CloseDoor();
-            }
+            playerInRange = true; // Oyuncu kapýnýn yakýnýnda
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerInRange = false; // Oyuncu kapýnýn yakýnýnda deðil
         }
     }
 }
