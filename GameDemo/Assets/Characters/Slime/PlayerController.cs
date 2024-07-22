@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
-using Cinemachine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -27,49 +25,17 @@ public class PlayerController : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-            SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to sceneLoaded event
         }
         else
         {
             Destroy(gameObject);
         }
     }
-
-    void OnDestroy()
-    {
-        if (instance == this)
-        {
-            SceneManager.sceneLoaded -= OnSceneLoaded; // Unsubscribe from sceneLoaded event
-        }
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        AssignVirtualCamera(); // Reassign the camera target when the scene is loaded
-    }
-
+ 
     public void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        AssignVirtualCamera();
-    }
-
-    void AssignVirtualCamera()
-    {
-        // Virtual Camera'yý bul ve hedefini ayarla
-        var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-
-        if (virtualCamera != null)
-        {
-            virtualCamera.Follow = transform;
-            virtualCamera.LookAt = transform;
-            Debug.Log("Virtual Camera target reassigned to player.");
-        }
-        else
-        {
-            Debug.LogError("Virtual Camera not found.");
-        }
     }
 
     public void FixedUpdate()

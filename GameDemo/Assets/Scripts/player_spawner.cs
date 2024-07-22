@@ -17,7 +17,6 @@ public class PlayerSpawner : MonoBehaviour
 
         // Karakteri belirtilen konumda spawnla
         // Yalnýzca prefab instantiate edilmiyorsa oyuncuyu oluþtur
-        VirtualScript.Instance.ReassignVirtualCameraTarget();
 
     }
 }
