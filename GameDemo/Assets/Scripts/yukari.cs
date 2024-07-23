@@ -16,7 +16,6 @@ public class yukari : MonoBehaviour
         {
             // Ensure the player object is not destroyed on scene load
             DontDestroyOnLoad(player);
-            Debug.Log("Player found and DontDestroyOnLoad set.");
         }
         else
         {
