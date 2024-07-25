@@ -5,6 +5,7 @@ public class PanelToggle : MonoBehaviour
 {
     public GameObject panel;
     public Button button;
+    private static PanelToggle instance;
 
     void Start()
     {
@@ -38,6 +39,20 @@ public class PanelToggle : MonoBehaviour
         else
         {
             Debug.LogError("Panel is not assigned.");
+        }
+    }
+
+
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 }

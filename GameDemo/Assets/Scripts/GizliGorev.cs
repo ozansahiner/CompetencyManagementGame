@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class gizliGorevController : MonoBehaviour
+public class GizliGorev : MonoBehaviour
 {
-    // Start is called before the first frame update
     public GameObject panel;
     public CapsuleCollider2D capsuleCollider;
 
@@ -14,15 +13,22 @@ public class gizliGorevController : MonoBehaviour
         panel.SetActive(false);
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    // Collider'a baþka bir obje girdiðinde çalýþýr
     void OnTriggerEnter2D(Collider2D other)
     {
         // Oyuncu görev balonuna girdiðinde paneli aç
         if (other.CompareTag("Player"))
         {
             panel.SetActive(true);
-            OpenPanel();
         }
     }
+
     // Collider'dan baþka bir obje çýktýðýnda çalýþýr
     void OnTriggerExit2D(Collider2D other)
     {
@@ -30,14 +36,6 @@ public class gizliGorevController : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             panel.SetActive(false);
-        }
- 
-    }
-    void OpenPanel()
-    {
-        if (panel != null)
-        {
-            panel.SetActive(true); // Paneli aç
         }
     }
 }
