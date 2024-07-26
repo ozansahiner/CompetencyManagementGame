@@ -1,23 +1,26 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Cinemachine;
 
-public class asagi_inmek : MonoBehaviour
+public class Asagi : MonoBehaviour
 {
-    //aþaðý inme kodu
-    public int sceneBuildIndex;
-    private GameObject player;
+    public int sceneBuildIndex;          // Hedef sahne index'i
+    private GameObject player;           // Oyuncu GameObject'i
+    public Animator transitionAnimator;  // Sahne geçiþ animasyonunun Animator bileþeni
+    public string closeTrigger = "End"; // Sahne kapanýþ trigger ismi
+    public string openTrigger = "Start"; // Sahne açýlýþ trigger ismi
+    public float transitionTime = 1.2f;    // Animasyon süresi
 
     private void Start()
     {
-        // Find the player object in the scene
+        // Oyuncu nesnesini sahnede bul
         player = GameObject.FindGameObjectWithTag("Player");
 
         if (player != null)
         {
-            // Ensure the player object is not destroyed on scene load
+            // Oyuncu nesnesinin sahne geçiþlerinde yok edilmemesini saðla
             DontDestroyOnLoad(player);
-            Debug.Log("Player found and DontDestroyOnLoad set.");
         }
         else
         {
@@ -29,7 +32,6 @@ public class asagi_inmek : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Player entered, so move level
             Debug.Log("Switching Scene to " + sceneBuildIndex);
             StartCoroutine(SwitchSceneAndRepositionPlayer());
         }
@@ -37,17 +39,37 @@ public class asagi_inmek : MonoBehaviour
 
     private IEnumerator SwitchSceneAndRepositionPlayer()
     {
-        // Load the new scene asynchronously
+        // Sahne kapanýþ animasyonunu baþlat
+        if (transitionAnimator != null)
+        {
+            Debug.Log("Starting close animation");
+            transitionAnimator.SetTrigger(closeTrigger);
+        }
+
+        // Animasyonun bitmesini bekle
+        yield return new WaitForSeconds(transitionTime);
+
+        // Yeni sahneyi asenkron olarak yükle
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneBuildIndex);
 
-        // Wait until the new scene is fully loaded
+        // Sahne yüklemesi bitene kadar bekle
         while (!asyncLoad.isDone)
         {
             yield return null;
         }
 
-        // Reposition the player in the new scene
+        // Oyuncuyu yeni sahnede yeniden konumlandýr
         RepositionPlayerInNewScene();
+
+        // Sahne açýlýþ animasyonunu baþlat
+        if (transitionAnimator != null)
+        {
+            Debug.Log("Starting open animation");
+            transitionAnimator.SetTrigger(openTrigger);
+
+            // Animasyonun bitmesini bekle
+            yield return new WaitForSeconds(transitionTime);
+        }
 
         // Virtual Camera'yý yeniden ayarla
         ReassignVirtualCameraTarget();
@@ -55,12 +77,12 @@ public class asagi_inmek : MonoBehaviour
 
     private void RepositionPlayerInNewScene()
     {
-        // Find the player start position in the new scene
+        // Yeni sahnedeki oyuncu baþlangýç konumunu bul
         GameObject playerStart = GameObject.FindGameObjectWithTag("PlayerSpawner");
 
         if (playerStart != null)
         {
-            // Reposition the player
+            // Oyuncuyu yeniden konumlandýr
             player.transform.position = playerStart.transform.position;
             Debug.Log("Player repositioned to " + player.transform.position);
         }
@@ -73,12 +95,12 @@ public class asagi_inmek : MonoBehaviour
     private void ReassignVirtualCameraTarget()
     {
         // Virtual Camera'yý bul ve hedefini ayarla
-        var virtualCamera = FindObjectOfType<Cinemachine.CinemachineVirtualCamera>();
+        var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+        var player = GameObject.FindGameObjectWithTag("Player");
 
         if (virtualCamera != null)
         {
             virtualCamera.Follow = player.transform;
-            virtualCamera.LookAt = player.transform;
             Debug.Log("Virtual Camera target reassigned to player.");
         }
         else

@@ -36,17 +36,42 @@ public class ToggleManager : MonoBehaviour
                 Debug.LogError("Toggle2 bileþeni bulunamadý.");
             }
         }
+
+        // Toggle state listener'larýný ayarla
+        if (toggle1Sound.m_Toggle1 != null)
+        {
+            toggle1Sound.m_Toggle1.onValueChanged.AddListener(delegate { HandleToggleChanged(toggle1Sound.m_Toggle1); });
+        }
+
+        if (toggle2Sound.m_Toggle2 != null)
+        {
+            toggle2Sound.m_Toggle2.onValueChanged.AddListener(delegate { HandleToggleChanged(toggle2Sound.m_Toggle2); });
+        }
     }
 
-    public void HandleToggleStatusChanged(Toggle toggle)
+    private void HandleToggleChanged(Toggle changedToggle)
     {
-        if (CheckToggleStatus())
+        if (changedToggle == toggle1Sound.m_Toggle1)
         {
-            Debug.Log("Toggle 1 is Off and Toggle 2 is On");
+            if (toggle1Sound.m_Toggle1.isOn)
+            {
+                // Toggle1 aktifse, Toggle2'yi kapat
+                if (toggle2Sound.m_Toggle2.isOn)
+                {
+                    toggle2Sound.m_Toggle2.isOn = false;
+                }
+            }
         }
-        else
+        else if (changedToggle == toggle2Sound.m_Toggle2)
         {
-            Debug.Log("Toggles are not in the desired state");
+            if (toggle2Sound.m_Toggle2.isOn)
+            {
+                // Toggle2 aktifse, Toggle1'i kapat
+                if (toggle1Sound.m_Toggle1.isOn)
+                {
+                    toggle1Sound.m_Toggle1.isOn = false;
+                }
+            }
         }
     }
 
@@ -64,6 +89,7 @@ public class ToggleManager : MonoBehaviour
             return false;
         }
 
+        // Ýki toggle'ýn da ayný anda aktif olup olmadýðýný kontrol et
         return (!toggle1Sound.m_Toggle1.isOn && toggle2Sound.m_Toggle2.isOn);
     }
 }

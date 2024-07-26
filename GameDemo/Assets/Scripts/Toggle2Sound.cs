@@ -17,14 +17,14 @@ public class Toggle2Sound : MonoBehaviour
             }
         }
 
-        m_Toggle2.onValueChanged.AddListener(OnToggle2ValueChanged);
-        OnToggle2ValueChanged(m_Toggle2);
+        m_Toggle2.onValueChanged.AddListener(OnToggleValueChanged);
+        OnToggleValueChanged(m_Toggle2);
 
         // Baþlangýç durumu için ToggleValueChanged metodunu çaðýrmak
     }
 
     // Toggle deðeri deðiþtiðinde çaðrýlacak metod
-    public void OnToggle2ValueChanged(bool isOn)
+    public void OnToggleValueChanged(bool isOn)
     {
         if (isOn)
         {
